@@ -1,0 +1,4 @@
+name = read sco node
+description =  Reads sco nodes and their metadata information
+core = 7.x
+

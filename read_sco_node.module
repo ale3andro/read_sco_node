@@ -1,0 +1,77 @@
+<?php
+/**
+ * @file
+ * A block module that parses sco and uses it
+ */
+
+/**
+ * Implements hook_help().
+ *
+ * Displays help and module information.
+ *
+ * @param path 
+ *   Which path of the site we're using to display help
+ * @param arg 
+ *   Array that holds the current path as returned from arg() function
+ */
+function read_sco_node_help($path, $arg) {
+  switch ($path) {
+    case "admin/help#Read_sco_node":
+      return '<p>' . t("ale3andro lives here!") . '</p>';
+      break;
+  }
+} 
+
+/**
+ * Implements hook_block_info().
+ */
+function read_sco_node_block_info() {
+  $blocks['read_sco_node'] = array(
+    // The name that will appear in the block list.
+    'info' => t('Saved sco nodes'),
+    // Default setting.
+    'cache' => DRUPAL_CACHE_PER_ROLE,
+  );
+  return $blocks;
+}
+
+
+function read_sco_node_contents() {
+  return db_select('sco_node', 'sn')
+		->fields('sn', array('nid', 'sco_path', 'sco_manifest'))
+		->execute();         
+}
+
+function read_sco_node_block_view($delta = '') {
+  switch ($delta) {
+    case 'read_sco_node':
+      $block['subject'] = t('Sco nodes in database');
+      if (user_access('access content')) {
+		$result = read_sco_node_contents();
+		$items = array();
+		foreach ($result as $node) {
+			$manifest = unserialize($node->sco_manifest);
+			$data = $node->sco_path . "<br />Identifier: " . $manifest->identifier;
+			$data = $data . "<br />Schema: " . $manifest->schema;
+			$data = $data . "<br />Organizations:<br />";
+			foreach ($manifest->organizations as $organization) {
+				$data = $data . "-----id: " . $organization->id;
+			}
+			
+			$items[] = array('data' => t($data),);
+		}
+		if (empty($items)) {
+			$block['content'] = t('Cannot find sco nodes saved in the db');
+		}
+		else {
+			$block['content'] = theme('item_list', array('items' => $items));
+		}
+      }
+      return $block;
+  }
+} 
+
+
+
+
+?>
