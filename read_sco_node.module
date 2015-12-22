@@ -37,11 +37,17 @@ function read_sco_node_block_info() {
 
 
 function read_sco_node_contents() {
+  
+  $max_num = variable_get('read_sco_node_max', 3);
   return db_select('sco_node', 'sn')
 		->fields('sn', array('nid', 'sco_path', 'sco_manifest'))
+		->range(0, $max_num)
 		->execute();         
 }
 
+/**
+ * Implements hook_block_view().
+ */
 function read_sco_node_block_view($delta = '') {
   switch ($delta) {
     case 'read_sco_node':
@@ -72,6 +78,137 @@ function read_sco_node_block_view($delta = '') {
 } 
 
 
+/**
+ * Implements hook_menu().
+ */
+function read_sco_node_menu() {
+  $items = array();
+
+  $items['admin/config/content/read_sco_node'] = array(
+    'title' => 'Saved sco nodes',
+    'description' => 'Displays all the saved sco_nodes in the database',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('read_sco_node_form'),
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
+ * Page callback: Read sco node settings
+ *
+ * @see read_sco_node_menu()
+ */
+function read_sco_node_form($form, &$form_state) {
+  $values = array();
+  $options = array();
+  $data = read_sco_node_contents();
+  $counter=0;
+  foreach($data as $node) {
+	  $counter++;
+	  $manifest = unserialize($node->sco_manifest);
+	  $values['sco' . $counter] = $manifest;
+	  $options[$node->nid] = $manifest->identifier;
+  } 
+  
+  $form['read_sco_node_max'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Maximum number of sco nodes to display'),
+    '#default_value' => variable_get('read_sco_node_max', 3),
+    '#size' => 2,
+    '#maxlength' => 2,
+    '#description' => t('The maximum number of sco nodes to display in the block.'),
+    '#required' => TRUE,
+  );
+	
+  $form['select_sco_node'] = array(
+    '#type' => 'select',
+    '#title' => t('Select a sco node to parse data from'),
+    '#default_value' => variable_get('read_sco_node_max', 3),
+    '#options' => $options,
+    '#description' => t('Select a sco node to parse data from'),
+    '#required' => TRUE,
+  );
+  
+  
+  
+  /* sco_Manifest Block */
+  $options = array(); // Empty the options array
+  $counter = 0; // Reset the node counter
+  $defaultSelectionValue = 0; // Reset the default Selection value
+  $nodes_sco_Manifest = node_load_multiple(array(), array('type' => 'sco_Manifest')); 
+  foreach ($nodes_sco_Manifest as $node) {
+	  $counter++;
+	  $options[$node->nid]  = $node->title;
+	  $defaultSelectionValue = $node->nid;
+  }
+  if ($counter>0) {
+	$form['select_sco_Manifest'] = array(
+		'#type' => 'select',
+		'#title' => t('Select a sco_Manifest node to write data to'),
+		'#default_value' => $defaultSelectionValue,
+		'#options' => $options,
+		'#description' => t('Select a sco_Manifest node to write data to'),
+		'#required' => TRUE,
+	);
+  }
+  /* End of sco_Manifest Block */
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Go!',
+  );
+  //return system_settings_form($form);	
+  return $form;
+}
+
+function read_sco_node_form_submit($form, &$form_state) {
+		
+	$selected_sco_node = $form_state['values']['select_sco_node'];
+	$sco_node = node_load($selected_sco_node);
+	
+	/* sco_Manifest Block */
+	$selected_sco_Manifest = $form_state['values']['select_sco_Manifest'];
+	$sco_Manifest = node_load($selected_sco_Manifest);
+	$sco_Manifest->field_manifestversion[LANGUAGE_NONE][0]['value'] = "from module";
+	$sco_Manifest->field_manifestbase[LANGUAGE_NONE][0]['value'] = "from module";
+	node_save($sco_Manifest);
+	/* End of sco_Manifest Block */
+	
+	$node = node_load(3);
+	$node->body[LANGUAGE_NONE][0]['value'] = "ale3andro made me!";
+	node_save($node);
+	$block['subject'] = "hello, world!";
+	drupal_set_message(t('The form has been submitted -->' . $sco_Manifest->field_manifestbase[LANGUAGE_NONE][0]['value']));
+	debug($selected_sco_node);
+	debug($sco_node);
+	
+}
 
 
 ?>

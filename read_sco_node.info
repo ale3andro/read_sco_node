@@ -1,4 +1,6 @@
 name = read sco node
 description =  Reads sco nodes and their metadata information
 core = 7.x
+dependencies[] = sco_node
 
+configure = admin/config/content/read_sco_node
