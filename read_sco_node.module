@@ -113,16 +113,6 @@ function read_sco_node_form($form, &$form_state) {
 	  $options[$node->nid] = $manifest->identifier;
   } 
   
-  $form['read_sco_node_max'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Maximum number of sco nodes to display'),
-    '#default_value' => variable_get('read_sco_node_max', 3),
-    '#size' => 2,
-    '#maxlength' => 2,
-    '#description' => t('The maximum number of sco nodes to display in the block.'),
-    '#required' => TRUE,
-  );
-	
   $form['select_sco_node'] = array(
     '#type' => 'select',
     '#title' => t('Select a sco node to parse data from'),
@@ -131,55 +121,7 @@ function read_sco_node_form($form, &$form_state) {
     '#description' => t('Select a sco node to parse data from'),
     '#required' => TRUE,
   );
-  
-  
-  
-  /* sco_Manifest Block */
-  $options = array(); // Empty the options array
-  $counter = 0; // Reset the node counter
-  $defaultSelectionValue = 0; // Reset the default Selection value
-  $nodes_sco_Manifest = node_load_multiple(array(), array('type' => 'sco_Manifest')); 
-  foreach ($nodes_sco_Manifest as $node) {
-	  $counter++;
-	  $options[$node->nid]  = $node->title;
-	  $defaultSelectionValue = $node->nid;
-  }
-  if ($counter>0) {
-	$form['select_sco_Manifest'] = array(
-		'#type' => 'select',
-		'#title' => t('Select a sco_Manifest node to write data to'),
-		'#default_value' => $defaultSelectionValue,
-		'#options' => $options,
-		'#description' => t('Select a sco_Manifest node to write data to'),
-		'#required' => TRUE,
-	);
-  }
-  /* End of sco_Manifest Block */
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  $form['submit'] = array(
+    $form['submit'] = array(
     '#type' => 'submit',
     '#value' => 'Go!',
   );
@@ -191,24 +133,65 @@ function read_sco_node_form_submit($form, &$form_state) {
 		
 	$selected_sco_node = $form_state['values']['select_sco_node'];
 	$sco_node = node_load($selected_sco_node);
-	
-	/* sco_Manifest Block */
-	$selected_sco_Manifest = $form_state['values']['select_sco_Manifest'];
-	$sco_Manifest = node_load($selected_sco_Manifest);
-	$sco_Manifest->field_manifestversion[LANGUAGE_NONE][0]['value'] = "from module";
-	$sco_Manifest->field_manifestbase[LANGUAGE_NONE][0]['value'] = "from module";
-	node_save($sco_Manifest);
-	/* End of sco_Manifest Block */
-	
-	$node = node_load(3);
-	$node->body[LANGUAGE_NONE][0]['value'] = "ale3andro made me!";
-	node_save($node);
-	$block['subject'] = "hello, world!";
-	drupal_set_message(t('The form has been submitted -->' . $sco_Manifest->field_manifestbase[LANGUAGE_NONE][0]['value']));
-	debug($selected_sco_node);
 	debug($sco_node);
+	
+	// manifest
+	if (array_key_exists('sco_manifest', $sco_node)) {
+		if (array_key_exists('schemaversion', $sco_node->sco_manifest)) 
+			debug($sco_node->sco_manifest->schemaversion);
+		if (array_key_exists('schemabase', $sco_node->sco_manifest))
+			debug($sco_node->sco_manifest->schemabase);
+		else
+			debug('SchemaBase key not found');
+	} else {
+		debug('Cannot find sco_manifest key');
+	}
+	
+	// files
+	if (array_key_exists('resources', $sco_node->sco_manifest)) {
+		foreach ($sco_node->sco_manifest->resources as $resource)
+		{
+			$counter = 0;
+			foreach ($resource->files as $key => $value) 
+			{
+				//debug('File: ' . $value);
+				$counter++;
+			}
+		}
+	} else {
+		debug('Cannot find resources key');
+	}
+	
+	
+	
+	$node = node_load(11);
+	//$node->body[LANGUAGE_NONE][0]['value'] = "ale3andro made me!";
+	//node_save($node);
+	//$block['subject'] = "hello, world!";
+	//drupal_set_message(t('The form has been submitted -->' . $sco_Manifest->field_manifestbase[LANGUAGE_NONE][0]['value']));
+	//debug($selected_sco_node);
+	$node->field_body[LANGUAGE_NONE][0]['value']='The body text';
+	node_save($node);
+	//debug($node);
+	
+	/*
+	$newNode = new stdClass();
+	$newNode->title = "custom Manifest";
+	$newNode->type = "sco_manifest";
+	node_object_prepare($newNode);
+	$newNode->language = LANGUAGE_NONE; // Or e.g. 'en' if locale is enabled
+	$newNode->status = 1; //(1 or 0): published or not
+	$newNode->promote = 0; //(1 or 0): promoted to front page
+	$newNode->comment = 0; // 0 = comments disabled, 1 = read only, 2 = read/write
+	
+	$newNode = node_submit($newNode); // Prepare node for saving
+	$newNode->body[LANGUAGE_NONE][0]['value'] = "ale3andro made me!";
+
+	node_save($newNode);
+	*/
 	
 }
 
 
 ?>
+
