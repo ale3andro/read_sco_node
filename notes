@@ -1,0 +1,211 @@
+τα nodes είναι:(είναι από τη βασική δομή του manifest)
+ok 1. Manifest  το οποίο έχει fields ManifestVersion, ManifestBase
+ok 2. Files
+ok 3.Items, fields-> ItemTitle, MinProgress, Parameters, Presentation, ProgressWeight, Item, TimeLimitAction, NavigationInterface, DataFromLMS
+ok 4.Organization, field-> OrganizationStructure, OrganizationTitle, GlobalObjectives
+ok 5.Resource, fields -> Type, Base, ScormType
+not found 6.SequencingCollection
+not found 7.OrganizationSequencing
+not found 8.ItemSequencing
+not found 9.Metadata
+10.ManifestMetadata
+11.OrganizationMetadata
+12.FileMetadata
+13.ResourceMetadata
+
+Οι υπόλοιπες πληροφορίες που δεν εμφανίζονται στα fields, όπως το organization id θα πρέπει να καταχωρούνται απευθείας στο Organization.
+
+
+
+stdClass::__set_state(array(
+   'vid' => '2',
+   'uid' => '1',
+   'title' => 'My First Sco',
+   'log' => '',
+   'status' => '1',
+   'comment' => '0',
+   'promote' => '1',
+   'sticky' => '0',
+   'nid' => '2',
+   'type' => 'sco_node',
+   'language' => 'und',
+   'created' => '1448920574',
+   'changed' => '1448920574',
+   'tnid' => '0',
+   'translate' => '0',
+   'revision_timestamp' => '1448920574',
+   'revision_uid' => '1',
+   'sco_path' => 'public://sco/020535A9-EB27-F539-2092-227D345EEFC3',
+   'sco_manifest' => 
+  stdClass::__set_state(array(
+     'identifier' => 'com.scorm.golfsamples.runtime.basicruntime.20043rd',
+     'version' => '1',
+     'schema' => 'ADL SCORM',
+     'schemaversion' => '2004 3rd Edition',
+     'root' => '',
+     'resource_root' => '',
+     'organizations' => 
+    array (
+      0 => 
+      stdClass::__set_state(array(
+         'id' => 'golf_sample_default_org',
+         'default' => true,
+         'items' => 
+        array (
+          0 => 
+          stdClass::__set_state(array(
+             'id' => 'item_1',
+             'res_id' => 'resource_1',
+             'parms' => '',
+             'timelimitaction' => '',
+             'lmsdata' => '',
+             'completionThreshold' => false,
+             'completedByMeasure' => false,
+             'minProgressMeasure' => false,
+             'progressWeight' => false,
+             'items' => 
+            array (
+            ),
+             'objectives' => 
+            array (
+            ),
+             'completionSetByContent' => 'true',
+             'objectiveSetByContent' => 'true',
+             'title' => 'Golf Explained',
+          )),
+        ),
+         'controlModeChoice' => 'true',
+         'controlModeFlow' => 'true',
+         'title' => 'Golf Explained - Run-time Basic Calls',
+      )),
+    ),
+     'resources' => 
+    array (
+      0 => 
+      stdClass::__set_state(array(
+         'id' => 'resource_1',
+         'type' => 'webcontent',
+         'sco_type' => '',
+         'href' => 'shared/launchpage.html',
+         'root' => '',
+         'files' => 
+        array (
+          0 => 'Etiquette/Course.html',
+          1 => 'Etiquette/course.jpg',
+          2 => 'Etiquette/Distracting.html',
+          3 => 'Etiquette/distracting.jpg',
+          4 => 'Etiquette/Play.html',
+          5 => 'Etiquette/play.jpg',
+          6 => 'Etiquette/questions.js',
+          7 => 'Handicapping/calchandi.jpg',
+          8 => 'Handicapping/calcscore.jpg',
+          9 => 'Handicapping/CalculatingHandicap.html',
+          10 => 'Handicapping/CalculatingScore.html',
+          11 => 'Handicapping/Example.html',
+          12 => 'Handicapping/example.jpg',
+          13 => 'Handicapping/Overview.html',
+          14 => 'Handicapping/overview.jpg',
+          15 => 'Handicapping/questions.js',
+          16 => 'HavingFun/friends.jpg',
+          17 => 'HavingFun/fun.jpg',
+          18 => 'HavingFun/HowToBeStylish.html',
+          19 => 'HavingFun/HowToHaveFun.html',
+          20 => 'HavingFun/MakeFriends.html',
+          21 => 'HavingFun/questions.js',
+          22 => 'HavingFun/stylish.jpg',
+          23 => 'Playing/otherscoreing.jpg',
+          24 => 'Playing/OtherScoring.html',
+          25 => 'Playing/Par.html',
+          26 => 'Playing/par.jpg',
+          27 => 'Playing/Playing.html',
+          28 => 'Playing/playing.jpg',
+          29 => 'Playing/questions.js',
+          30 => 'Playing/rules.jpg',
+          31 => 'Playing/RulesOfGolf.html',
+          32 => 'Playing/Scoring.html',
+          33 => 'Playing/scoring.jpg',
+          34 => 'shared/assessmenttemplate.html',
+          35 => 'shared/background.jpg',
+          36 => 'shared/cclicense.png',
+          37 => 'shared/contentfunctions.js',
+          38 => 'shared/launchpage.html',
+          39 => 'shared/scormfunctions.js',
+          40 => 'shared/style.css',
+        ),
+         'depends' => 
+        array (
+        ),
+      )),
+    ),
+     'sequencing' => 
+    array (
+    ),
+  )),
+   'sco_options' => 
+  array (
+    'show_toc' => 0,
+    'show_nav' => 0,
+    'width' => '',
+    'height' => '',
+    'show_border' => 0,
+    'scoring' => 'SCO Score',
+    'attempts' => '0',
+    'attempt_scoring' => 'Highest Attempt',
+    'attempt_display' => 'Display Score and Outcome',
+    'hide_attempt_summary' => 0,
+    'disable_resume' => 0,
+    'show_exit_link' => 0,
+    'auto_exit_when_completed' => 0,
+    'completed_url' => '',
+    'completed_url_delay' => '',
+    'debug' => 0,
+    'comm_check' => 0,
+    'commit_async' => 0,
+    'log_suspend' => 0,
+  ),
+   'body' => 
+  array (
+    'und' => 
+    array (
+      0 => 
+      array (
+        'value' => 'My First Sco',
+        'summary' => '',
+        'format' => 'plain_text',
+        'safe_value' => '<p>My First Sco</p>
+',
+        'safe_summary' => '',
+      ),
+    ),
+  ),
+   'name' => 'admin',
+   'picture' => '0',
+   'data' => 'b:0;',
+))
+
+
+$node = node_load(4);
+	//$node->body[LANGUAGE_NONE][0]['value'] = "ale3andro made me!";
+	//node_save($node);
+	//$block['subject'] = "hello, world!";
+	//drupal_set_message(t('The form has been submitted -->' . $sco_Manifest->field_manifestbase[LANGUAGE_NONE][0]['value']));
+	//debug($selected_sco_node);
+	$node->field_body[LANGUAGE_NONE][0]['value']='The body text';
+	node_save($node);
+	//debug($node);
+	
+	/*
+	$newNode = new stdClass();
+	$newNode->title = "custom Manifest";
+	$newNode->type = "sco_manifest";
+	node_object_prepare($newNode);
+	$newNode->language = LANGUAGE_NONE; // Or e.g. 'en' if locale is enabled
+	$newNode->status = 1; //(1 or 0): published or not
+	$newNode->promote = 0; //(1 or 0): promoted to front page
+	$newNode->comment = 0; // 0 = comments disabled, 1 = read only, 2 = read/write
+	
+	$newNode = node_submit($newNode); // Prepare node for saving
+	$newNode->body[LANGUAGE_NONE][0]['value'] = "ale3andro made me!";
+
+	node_save($newNode);
+	*/
