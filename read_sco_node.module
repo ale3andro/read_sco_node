@@ -140,6 +140,30 @@ function data_parser($base, $fields) {
 	return $retVal;
 }
 
+function create_and_save_node($title, $type, $extraFieldsAndValues ) {
+	$node = new stdClass();
+	$node->title = $title . " " . date("Y-m-d") . "--" . date("h:i:sa");
+	$node->type = $type;
+	node_object_prepare($node);
+	$node->language = LANGUAGE_NONE; // Or e.g. 'en' if locale is enabled
+	$node->status = 1; //(1 or 0): published or not
+	$node->promote = 0; //(1 or 0): promoted to front page
+	$node->comment = 0; // 0 = comments disabled, 1 = read only, 2 = read/write
+	$node = node_submit($node); // Prepare node for saving
+	//node_save($node);
+	
+	$node3 = node_load(26);
+	$values = [ 'field_body', 'field_manifestversion', 'field_manifestbase'];
+	foreach ($extraFieldsAndValues as $key => $value) {
+		//	debug($key . ":" . $value);
+		$node3->$key[LANGUAGE_NONE][0]['value'] = $value . "a-a";
+		debug($node3->$key);
+	}
+	$node3->field_manifestversion[LANGUAGE_NONE][0]['value'] = "maif";
+	debug($node3);
+	node_save($node3);
+}
+
 
 function read_sco_node_form_submit($form, &$form_state) {
 		
@@ -152,20 +176,11 @@ function read_sco_node_form_submit($form, &$form_state) {
 	if (array_key_exists('sco_manifest', $sco_node)) {
 		$node_sco_manifest = data_parser($sco_node->sco_manifest, $manifestFields);
 		
-		$node_sco_manifest_to_save = new stdClass();
-		$node_sco_manifest_to_save->title = "custom Manifest: " . date("Y-m-d") . "--" . date("h:i:sa");
-		$node_sco_manifest_to_save->type = "sco_manifest";
-		node_object_prepare($node_sco_manifest_to_save);
-		$node_sco_manifest_to_save->language = LANGUAGE_NONE; // Or e.g. 'en' if locale is enabled
-		$node_sco_manifest_to_save->status = 1; //(1 or 0): published or not
-		$node_sco_manifest_to_save->promote = 0; //(1 or 0): promoted to front page
-		$node_sco_manifest_to_save->comment = 0; // 0 = comments disabled, 1 = read only, 2 = read/write
-		$node_sco_manifest_to_save->body[LANGUAGE_NONE][0]['value'] = "Manifest";
-		$node_sco_manifest_to_save->field_manifestversion[LANGUAGE_NONE][0]['value'] = $node_sco_manifest['schemaversion'];
-		$node_sco_manifest_to_save->field_manifestbase[LANGUAGE_NONE][0]['value'] = $node_sco_manifest['schemabase'];
-		$node_sco_manifest_to_save = node_submit($node_sco_manifest_to_save); // Prepare node for saving
-		node_save($node_sco_manifest_to_save);
-		debug('sco_manifest node created successfully');
+		// Create and save the node
+		$node_db_fields = [ 'field_body' => 'Manifest',
+							'field_manifestversion' => $node_sco_manifest['schemaversion'],
+							'field_manifestbase' => $node_sco_manifest['schemabase'] ];
+		create_and_save_node("custom Manifest", "sco_manifest", $node_db_fields);
 	}
 	else
 		debug('Cannot find sco_manifest key');
