@@ -125,7 +125,6 @@ function read_sco_node_form($form, &$form_state) {
     '#type' => 'submit',
     '#value' => 'Go!',
   );
-  //return system_settings_form($form);	
   return $form;
 }
 
@@ -149,19 +148,12 @@ function create_and_save_node($title, $type, $extraFieldsAndValues ) {
 	$node->status = 1; //(1 or 0): published or not
 	$node->promote = 0; //(1 or 0): promoted to front page
 	$node->comment = 0; // 0 = comments disabled, 1 = read only, 2 = read/write
-	$node = node_submit($node); // Prepare node for saving
-	//node_save($node);
 	
-	$node3 = node_load(26);
-	$values = [ 'field_body', 'field_manifestversion', 'field_manifestbase'];
-	foreach ($extraFieldsAndValues as $key => $value) {
-		//	debug($key . ":" . $value);
-		$node3->$key[LANGUAGE_NONE][0]['value'] = $value . "a-a";
-		debug($node3->$key);
-	}
-	$node3->field_manifestversion[LANGUAGE_NONE][0]['value'] = "maif";
-	debug($node3);
-	node_save($node3);
+	foreach ($extraFieldsAndValues as $key => $value)
+		$node->{$key}[LANGUAGE_NONE][0]['value'] = $value;
+	 // Prepare node for saving
+	$node = node_submit($node);
+	node_save($node);
 }
 
 
@@ -169,42 +161,44 @@ function read_sco_node_form_submit($form, &$form_state) {
 		
 	$selected_sco_node = $form_state['values']['select_sco_node'];
 	$sco_node = node_load($selected_sco_node);
-	//debug($sco_node);
 	
-	// manifest -01-
+	/** manifest -01- **/
 	$manifestFields = ["schemaversion", "schemabase"];
 	if (array_key_exists('sco_manifest', $sco_node)) {
 		$node_sco_manifest = data_parser($sco_node->sco_manifest, $manifestFields);
-		
-		// Create and save the node
-		$node_db_fields = [ 'field_body' => 'Manifest',
+		$node_manifest_db_fields = [ 'field_body' => 'Manifest',
 							'field_manifestversion' => $node_sco_manifest['schemaversion'],
 							'field_manifestbase' => $node_sco_manifest['schemabase'] ];
-		create_and_save_node("custom Manifest", "sco_manifest", $node_db_fields);
+		create_and_save_node("custom Manifest", "sco_manifest", $node_manifest_db_fields);
 	}
 	else
 		debug('Cannot find sco_manifest key');
+	/** end of manifest **/
 	
 	
 	if (array_key_exists('resources', $sco_node->sco_manifest)) {
 		foreach ($sco_node->sco_manifest->resources as $resource)
 		{
-			// resource -04-
+			/** resource -05- **/
 			$resourceFields = ["type", "base", "scormType"];
 			$node_sco_resource = data_parser($resource, $resourceFields);
+			$node_resource_db_fields = [ 'field_type' => $node_sco_resource['type'],
+								'field_base' => $node_sco_resource['base'],
+								'field_scormtype' => $node_sco_resource['scormType'] ];
+			create_and_save_node("custom Resource", "sco_resource", $node_resource_db_fields);
+			/** end of resource **/
 			
-			// files -02-
+			/** files -02- **/
 			if (array_key_exists('files', $resource)) {
 				foreach ($resource->files as $key => $value) 
 				{
-					//debug('File: ' . $value);
-					continue;
+					$node_file_db_fields = ['body' => $value];
+					create_and_save_node("custom File", "sco_files", $node_file_db_fields);
 				}
 			}
-			else {
-				//debug('files not found');
-				continue;
-			}
+			else
+				debug('files not found');
+			/** end of files **/
 		}
 	} else {
 		debug('Cannot find resources key');
@@ -213,15 +207,31 @@ function read_sco_node_form_submit($form, &$form_state) {
 	if (array_key_exists('organizations', $sco_node->sco_manifest)) {
 		foreach ($sco_node->sco_manifest->organizations as $organization)
 		{
-			// organization -04-
+			/** organization -04- **/
 			$organizationFields = ["OrganizationStructure", "OrganizationTitle", "GlobalObjectives"];
 			$node_organization = data_parser($organization, $organizationFields);
+			$node_organization_db_fields = [ 'field_organizationstructure' => $node_organization['OrganizationStructure'],
+												'field_organizationtitle' => $node_organization['OrganizationTitle'],
+												'field_globalobjectives' => $node_organization['GlobalObjectives'] ];
+			create_and_save_node("custom Organization", "sco_organization", $node_organization_db_fields);
+			/** end of organization **/
 							
 			if (array_key_exists('items', $organization)) {
 				foreach ($organization->items as $item) {
-					//items -03-
+					/** items -03- **/
 					$itemFields = ["title", "MinProgress", "Parameters", "Presentation", "progressWeight", "Item", "timelimitaction", "NavigationInterface", "lmsdata"];
 					$sco_items = data_parser($item, $itemFields);
+					$node_item_db_fields = [ 'field_itemtitle' => $sco_items['title'],
+												'field_minprogress' => $sco_items['MinProgress'],
+												'field_parameters' => $sco_items['Parameters'],
+												'field_presentation' => $sco_items['Presentation'],
+												'field_progressweight' => $sco_items['progressWeight'],
+												'field_item' => $sco_items['Item'],
+												'field_timelimitaction' => $sco_items['timelimitaction'],
+												'field_navigationinterface' => $sco_items['NavigationInterface'],
+												'field_datafromlms' => $sco_items['lmsdata'] ];
+					create_and_save_node("custom Item", "sco_items", $node_item_db_fields);
+					/** end of items **/
 				}
 			}
 			else {
@@ -231,36 +241,6 @@ function read_sco_node_form_submit($form, &$form_state) {
 	} else {
 		debug('Cannot find organizations key');
 	}
-	
-	
-	//$node = node_load(4);
-	//$node->body[LANGUAGE_NONE][0]['value'] = "ale3andro made me!";
-	//node_save($node);
-	//$block['subject'] = "hello, world!";
-	//drupal_set_message(t('The form has been submitted -->' . $sco_Manifest->field_manifestbase[LANGUAGE_NONE][0]['value']));
-	//debug($selected_sco_node);
-	//$node->field_body[LANGUAGE_NONE][0]['value']='The body text';
-	//node_save($node);
-	//debug($node);
-	
-	/*
-	$newNode = new stdClass();
-	$newNode->title = "custom Manifest";
-	$newNode->type = "sco_manifest";
-	node_object_prepare($newNode);
-	$newNode->language = LANGUAGE_NONE; // Or e.g. 'en' if locale is enabled
-	$newNode->status = 1; //(1 or 0): published or not
-	$newNode->promote = 0; //(1 or 0): promoted to front page
-	$newNode->comment = 0; // 0 = comments disabled, 1 = read only, 2 = read/write
-	
-	$newNode = node_submit($newNode); // Prepare node for saving
-	$newNode->body[LANGUAGE_NONE][0]['value'] = "ale3andro made me!";
-
-	node_save($newNode);
-	*/
-	
 }
-
-
 ?>
 

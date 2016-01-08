@@ -1,9 +1,9 @@
 τα nodes είναι:(είναι από τη βασική δομή του manifest)
-ok 1. Manifest  το οποίο έχει fields ManifestVersion, ManifestBase
+okk 1. Manifest  το οποίο έχει fields ManifestVersion, ManifestBase
 ok 2. Files
-ok 3.Items, fields-> ItemTitle, MinProgress, Parameters, Presentation, ProgressWeight, Item, TimeLimitAction, NavigationInterface, DataFromLMS
-ok 4.Organization, field-> OrganizationStructure, OrganizationTitle, GlobalObjectives
-ok 5.Resource, fields -> Type, Base, ScormType
+okk 3.Items, fields-> ItemTitle, MinProgress, Parameters, Presentation, ProgressWeight, Item, TimeLimitAction, NavigationInterface, DataFromLMS
+okk 4.Organization, field-> OrganizationStructure, OrganizationTitle, GlobalObjectives
+okk 5.Resource, fields -> Type, Base, ScormType
 not found 6.SequencingCollection
 not found 7.OrganizationSequencing
 not found 8.ItemSequencing
